@@ -3,41 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>macOS Pro Workspace - P2P Node</title>
+    <title>Apple Developer Style - P2P Node</title>
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <style>
-        /* --- Apple Pro Studio Design System (Xcode / Logic Theme) --- */
         :root {
-            --sys-bg: #1e1e1e;
-            --sys-sidebar: #252526;
-            --sys-panel: #2d2d2d;
-            --sys-border: #38383a;
-            --sys-border-subtle: rgba(255, 255, 255, 0.08);
-            
-            --text-primary: #f5f5f7;
+            --bg-color: #000000;
+            --surface-color: #161618;
+            --surface-elevated: #1e1e20;
+            --border-color: #333336;
+            --text-main: #f5f5f7;
             --text-secondary: #86868b;
-            --text-disabled: #48484a;
-            
-            --accent: #0a84ff;
-            --accent-hover: #409cff;
+            --accent: #0066CC;
+            --accent-hover: #0077ED;
             --danger: #ff453a;
             --success: #30d158;
-            
-            --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
-            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
         }
 
         body {
             font-family: var(--font-stack);
-            background-color: var(--sys-bg);
-            color: var(--text-primary);
+            background-color: var(--bg-color);
+            color: var(--text-main);
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -45,163 +37,157 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Верхняя панель инструментов (macOS Toolbar) */
-        .app-toolbar {
-            height: 52px;
-            background-color: var(--sys-sidebar);
-            border-bottom: 1px solid var(--sys-border);
+        /* Верхняя панель навигации в стиле Apple Developer */
+        header.app-header {
+            height: 64px;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 16px;
+            padding: 0 32px;
             flex-shrink: 0;
         }
 
-        .toolbar-group {
+        .brand-title {
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--text-main);
+        }
+
+        .system-status {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 8px;
-            margin-right: 12px;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        .dot-close { background-color: #ff5f56; border: 1px solid #e0443e; }
-        .dot-min { background-color: #ffbd2e; border: 1px solid #dea123; }
-        .dot-max { background-color: #27c93f; border: 1px solid #1aab29; }
-
-        .app-title {
-            font-size: 13px;
-            font-weight: 600;
+            gap: 10px;
+            font-size: 14px;
             color: var(--text-secondary);
-            letter-spacing: -0.1px;
         }
 
-        /* Основное рабочее пространство (Workspace Grid) */
-        .workspace {
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--danger);
+        }
+
+        .status-dot.active {
+            background-color: var(--success);
+        }
+
+        /* Основной контейнер на весь экран */
+        .app-workspace {
             flex-grow: 1;
             display: grid;
-            grid-template-columns: 280px 1fr 340px;
-            height: calc(100vh - 52px);
-            background-color: var(--sys-bg);
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            padding: 24px 32px;
+            background-color: var(--bg-color);
+            height: calc(100vh - 64px);
         }
 
-        /* Боковые панели */
-        .sidebar {
-            background-color: var(--sys-sidebar);
-            border-right: 1px solid var(--sys-border);
+        .column {
             display: flex;
             flex-direction: column;
-            padding: 16px;
+            gap: 20px;
+            height: 100%;
+        }
+
+        /* Карточки-секции */
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
             gap: 16px;
         }
 
-        .inspector {
-            background-color: var(--sys-sidebar);
-            border-left: 1px solid var(--sys-border);
-            display: flex;
-            flex-direction: column;
-            padding: 16px;
-            gap: 16px;
-        }
-
-        .panel-section {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .panel-label {
-            font-size: 11px;
+        .card-title {
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* Поля ввода и элементы управления */
-        input[type="text"] {
-            background-color: var(--sys-panel);
-            border: 1px solid var(--sys-border);
-            border-radius: 6px;
-            color: var(--text-primary);
-            padding: 8px 12px;
+        /* Панель управления звонком */
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .id-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .id-box {
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-family: ui-monospace, monospace;
             font-size: 13px;
-            font-family: var(--font-stack);
+            color: var(--text-main);
+            user-select: all;
+        }
+
+        /* Инпуты и Кнопки */
+        input[type="text"] {
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
             outline: none;
             width: 100%;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            transition: border-color 0.2s;
         }
 
         input[type="text"]:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.25);
         }
 
-        .id-display {
-            background-color: var(--sys-panel);
-            border: 1px solid var(--sys-border);
-            border-radius: 6px;
-            padding: 8px 12px;
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--accent);
-            user-select: all;
-            word-break: break-all;
-        }
-
-        /* Профессиональные кнопки */
         .btn {
-            background-color: var(--sys-panel);
-            border: 1px solid var(--sys-border);
-            color: var(--text-primary);
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.15s ease, border-color 0.15s ease;
+            transition: background-color 0.2s, transform 0.1s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            white-space: nowrap;
         }
 
         .btn:hover:not(:disabled) {
-            background-color: #3a3a3c;
-            border-color: #48484a;
-        }
-
-        .btn:active:not(:disabled) {
-            background-color: #242426;
-        }
-
-        .btn-primary {
-            background-color: var(--accent);
-            border-color: transparent;
-            color: #ffffff;
-        }
-
-        .btn-primary:hover:not(:disabled) {
             background-color: var(--accent-hover);
         }
 
+        .btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
         .btn-danger {
-            background-color: rgba(255, 69, 58, 0.15);
-            border-color: rgba(255, 69, 58, 0.3);
+            background-color: rgba(255, 69, 58, 0.2);
             color: var(--danger);
         }
 
         .btn-danger:hover:not(:disabled) {
-            background-color: rgba(255, 69, 58, 0.25);
+            background-color: rgba(255, 69, 58, 0.3);
         }
 
         .btn:disabled {
@@ -209,28 +195,19 @@
             cursor: not-allowed;
         }
 
-        /* Центральный холст (Viewport) */
-        .viewport-container {
-            background-color: var(--sys-bg);
-            display: flex;
-            flex-direction: column;
-            padding: 16px;
-            gap: 16px;
-            overflow: hidden;
-        }
-
-        .video-canvas-grid {
+        /* Сетка видео */
+        .video-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
             gap: 16px;
             flex-grow: 1;
             min-height: 0;
         }
 
-        .video-viewport {
-            background-color: #000000;
-            border: 1px solid var(--sys-border);
-            border-radius: 8px;
+        .video-wrapper {
+            background-color: #0b0b0d;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
             position: relative;
             overflow: hidden;
             display: flex;
@@ -244,226 +221,162 @@
             object-fit: cover;
         }
 
-        .viewport-overlay-label {
+        .video-label {
             position: absolute;
-            top: 12px;
-            left: 12px;
+            bottom: 14px;
+            left: 14px;
             background-color: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(10px);
-            border: 1px solid var(--sys-border-subtle);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 500;
-            color: var(--text-primary);
-            z-index: 10;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Чат (Messages Module) */
-        .chat-container {
+        /* Правая колонка: Чат */
+        .chat-card {
             flex-grow: 1;
-            background-color: var(--sys-panel);
-            border: 1px solid var(--sys-border);
-            border-radius: 6px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            padding: 20px;
         }
 
-        .chat-messages {
+        .messages-container {
             flex-grow: 1;
-            padding: 12px;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            font-size: 13px;
+            gap: 12px;
+            font-size: 14px;
         }
 
-        .chat-msg {
+        .message-item {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 4px;
             max-width: 85%;
         }
 
-        .chat-msg.self {
+        .message-item.self {
             align-self: flex-end;
             align-items: flex-end;
         }
 
-        .msg-bubble {
-            background-color: #3a3a3c;
-            padding: 8px 12px;
-            border-radius: 6px;
+        .bubble {
+            background-color: #2c2c2e;
+            padding: 10px 14px;
+            border-radius: 12px;
+            line-height: 1.4;
             word-break: break-word;
         }
 
-        .chat-msg.self .msg-bubble {
+        .message-item.self .bubble {
             background-color: var(--accent);
-            color: #ffffff;
+            color: #fff;
         }
 
-        .msg-info {
-            font-size: 10px;
+        .msg-time {
+            font-size: 11px;
             color: var(--text-secondary);
         }
 
         .chat-input-row {
-            padding: 8px;
-            background-color: var(--sys-sidebar);
-            border-top: 1px solid var(--sys-border);
             display: flex;
-            gap: 6px;
-        }
-
-        /* Статус бар */
-        .status-bar {
-            height: 24px;
-            background-color: var(--sys-sidebar);
-            border-top: 1px solid var(--sys-border);
-            display: flex;
-            align-items: center;
-            padding: 0 12px;
-            font-size: 11px;
-            color: var(--text-secondary);
-            justify-content: space-between;
-            flex-shrink: 0;
-        }
-
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--danger);
-            margin-right: 6px;
-        }
-        .status-indicator.active {
-            background-color: var(--success);
+            gap: 10px;
+            margin-top: 12px;
         }
     </style>
 </head>
 <body>
 
-    <!-- macOS Window Toolbar -->
-    <header class="app-toolbar">
-        <div class="toolbar-group">
-            <div class="window-controls">
-                <div class="dot dot-close"></div>
-                <div class="dot dot-min"></div>
-                <div class="dot dot-max"></div>
-            </div>
-            <span class="app-title">P2P Node Studio — Core v2.4</span>
-        </div>
-        <div class="toolbar-group">
-            <span id="global-timer" style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">00:00:00</span>
+    <header class="app-header">
+        <div class="brand-title">Apple Developer Node Environment</div>
+        <div class="system-status">
+            <span class="status-dot" id="status-dot"></span>
+            <span id="status-text">Инициализация...</span>
         </div>
     </header>
 
-    <!-- Основной интерфейс -->
-    <div class="workspace">
-        
-        <!-- Левая панель: Сетевые настройки и профиль -->
-        <aside class="sidebar">
-            <div class="panel-section">
-                <span class="panel-label">Идентификатор узла</span>
-                <div class="id-display" id="node-id">Генерация сессии...</div>
+    <main class="app-workspace">
+        <!-- Левая колонка: Управление и Видео -->
+        <div class="column">
+            <div class="card">
+                <div class="id-row">
+                    <span>Ваш уникальный ID узла:</span>
+                    <span class="id-box" id="my-id">Генерация...</span>
+                </div>
+                <div class="control-panel">
+                    <input type="text" id="target-id" placeholder="Введите ID собеседника для вызова..." autocomplete="off">
+                    <button class="btn" id="btn-call" disabled>Вызов</button>
+                </div>
             </div>
 
-            <div class="panel-section">
-                <span class="panel-label">Управление вызовом</span>
-                <input type="text" id="target-id" placeholder="Введите ID удаленного узла..." autocomplete="off">
-                <button class="btn btn-primary" id="btn-call" disabled>Установить связь</button>
-                <button class="btn btn-danger" id="btn-hangup" disabled>Разорвать соединение</button>
-            </div>
-
-            <div class="panel-section">
-                <span class="panel-label">Периферия</span>
-                <button class="btn" id="btn-toggle-video">Видео: ВКЛ</button>
-                <button class="btn" id="btn-toggle-audio">Аудио: ВКЛ</button>
-            </div>
-        </aside>
-
-        <!-- Центральная область: Видеопотоки -->
-        <main class="viewport-container">
-            <div class="video-canvas-grid">
-                <div class="video-viewport">
-                    <span class="viewport-overlay-label">Локальный узел (Вы)</span>
+            <div class="video-grid">
+                <div class="video-wrapper">
+                    <span class="video-label">Локальная камера (Вы)</span>
                     <video id="local-video" autoplay muted playsinline></video>
                 </div>
-                <div class="video-viewport">
-                    <span class="viewport-overlay-label">Удаленный узел (Собеседник)</span>
+                <div class="video-wrapper">
+                    <span class="video-label">Удаленный поток (Собеседник)</span>
                     <video id="remote-video" autoplay playsinline></video>
                 </div>
             </div>
-        </main>
 
-        <!-- Правая панель: Инспектор чата -->
-        <aside class="inspector">
-            <span class="panel-label">Защищенный канал данных</span>
-            <div class="chat-container">
-                <div class="chat-messages" id="chat-messages">
-                    <div class="chat-msg">
-                        <div class="msg-bubble">Система инициализирована. Ожидание подключения...</div>
-                        <div class="msg-info">System</div>
+            <div>
+                <button class="btn btn-danger" id="btn-hangup" disabled style="width: 100%;">Завершить сессию</button>
+            </div>
+        </div>
+
+        <!-- Правая колонка: Защищенный чат -->
+        <div class="column">
+            <div class="card chat-card">
+                <div class="card-title">Защищенный чат сессии</div>
+                <div class="messages-container" id="messages-container">
+                    <div class="message-item">
+                        <div class="bubble" style="color: var(--text-secondary); background: transparent; border: 1px solid var(--border-color);">Система готова к обмену сообщениями. Ожидание подключения узла...</div>
                     </div>
                 </div>
                 <div class="chat-input-row">
-                    <input type="text" id="chat-input" placeholder="Сообщение..." disabled>
-                    <button class="btn btn-primary" id="btn-send" disabled>Отпр.</button>
+                    <input type="text" id="chat-input" placeholder="Введите сообщение..." disabled>
+                    <button class="btn" id="btn-send" disabled>Отпр.</button>
                 </div>
             </div>
-        </aside>
+        </div>
+    </main>
 
-    </div>
-
-    <!-- Системный статус-бар -->
-    <footer class="status-bar">
-        <div><span class="status-indicator" id="status-dot"></span><span id="status-text">Инициализация PeerJS архитектуры...</span></div>
-        <div id="connection-stats" style="font-family: var(--font-mono);">ICE: Standby</div>
-    </footer>
-
-    <!-- Архитектурный скрипт контроллера -->
     <script>
-        /**
-         * P2P Node Core Architecture Controller
-         * Handles WebRTC stream multiplexing, PeerJS bindings, and UI state synchronization.
-         */
-        class NodeStudioApp {
+        class P2PApp {
             constructor() {
                 this.peer = null;
                 this.localStream = null;
                 this.currentCall = null;
                 this.dataConnection = null;
-                
-                this.isVideoEnabled = true;
-                this.isAudioEnabled = true;
 
                 this.initDOM();
                 this.initPeer();
-                this.initMediaDevices();
-                this.initEventListeners();
-                this.initTimer();
+                this.initMedia();
+                this.initEvents();
             }
 
             initDOM() {
                 this.dom = {
-                    nodeId: document.getElementById('node-id'),
+                    myId: document.getElementById('my-id'),
                     targetId: document.getElementById('target-id'),
                     btnCall: document.getElementById('btn-call'),
                     btnHangup: document.getElementById('btn-hangup'),
-                    btnToggleVideo: document.getElementById('btn-toggle-video'),
-                    btnToggleAudio: document.getElementById('btn-toggle-audio'),
                     localVideo: document.getElementById('local-video'),
                     remoteVideo: document.getElementById('remote-video'),
-                    chatMessages: document.getElementById('chat-messages'),
+                    messagesContainer: document.getElementById('messages-container'),
                     chatInput: document.getElementById('chat-input'),
                     btnSend: document.getElementById('btn-send'),
                     statusDot: document.getElementById('status-dot'),
-                    statusText: document.getElementById('status-text'),
-                    connectionStats: document.getElementById('connection-stats'),
-                    globalTimer: document.getElementById('global-timer')
+                    statusText: document.getElementById('status-text')
                 };
             }
 
@@ -477,167 +390,118 @@
                     }
                 });
 
-                this.peer.on('open', (id) => {
-                    this.dom.nodeId.textContent = id;
-                    this.updateStatus(true, 'Узел активен и готов к вызовам');
+                this.peer.on('open', id => {
+                    this.dom.myId.textContent = id;
+                    this.setStatus(true, 'Узел активен, ожидает вызова');
                     this.dom.btnCall.disabled = false;
                 });
 
-                this.peer.on('error', (err) => {
-                    this.updateStatus(false, `Ошибка сети: ${err.type}`);
-                    this.logSystemMessage(`Сетевая ошибка: ${err.message}`);
+                this.peer.on('error', err => {
+                    this.setStatus(false, `Ошибка: ${err.type}`);
                 });
 
-                // Входящий видеовызов
-                this.peer.on('call', (call) => {
+                this.peer.on('call', call => {
                     this.currentCall = call;
-                    this.dom.statusText.textContent = `Входящий вызов от: ${call.peer}`;
-                    
                     call.answer(this.localStream || new MediaStream());
                     this.bindCallEvents(call);
                 });
 
-                // Входящее подключение чата
-                this.peer.on('connection', (conn) => {
+                this.peer.on('connection', conn => {
                     this.setupDataConnection(conn);
                 });
             }
 
-            async initMediaDevices() {
+            async initMedia() {
                 try {
-                    this.localStream = await navigator.mediaDevices.getUserMedia({ 
-                        video: { width: 1280, height: 720 }, 
-                        audio: true 
-                    });
+                    this.localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                     this.dom.localVideo.srcObject = this.localStream;
-                    this.logSystemMessage('Локальная периферия успешно подключена.');
-                } catch (err) {
-                    this.logSystemMessage('Ошибка доступа к камере/микрофону. Запуск в аудио/текстовом режиме.');
-                    this.dom.localVideo.style.display = 'none';
+                } catch (e) {
+                    this.setStatus(false, 'Камера недоступна (аудио/текст режим)');
                 }
             }
 
-            initEventListeners() {
+            initEvents() {
                 this.dom.btnCall.addEventListener('click', () => {
-                    const targetId = this.dom.targetId.value.trim();
-                    if (!targetId) return;
+                    const id = this.dom.targetId.value.trim();
+                    if (!id) return;
 
                     this.dom.btnCall.disabled = true;
                     this.dom.targetId.disabled = true;
-                    this.dom.statusText.textContent = `Установка соединения с ${targetId}...`;
+                    this.setStatus(true, `Установка связи с ${id}...`);
 
-                    // Инициируем вызов и канал данных параллельно
-                    const call = this.peer.call(targetId, this.localStream || new MediaStream());
+                    const call = this.peer.call(id, this.localStream || new MediaStream());
                     this.currentCall = call;
                     this.bindCallEvents(call);
 
-                    const conn = this.peer.connect(targetId);
+                    const conn = this.peer.connect(id);
                     this.setupDataConnection(conn);
                 });
 
-                this.dom.btnHangup.addEventListener('click', () => {
-                    this.terminateConnection();
-                });
+                this.dom.btnHangup.addEventListener('click', () => this.terminate());
 
-                this.dom.btnToggleVideo.addEventListener('click', () => {
-                    if (!this.localStream) return;
-                    this.isVideoEnabled = !this.isVideoEnabled;
-                    this.localStream.getVideoTracks().forEach(track => track.enabled = this.isVideoEnabled);
-                    this.dom.btnToggleVideo.textContent = `Видео: ${this.isVideoEnabled ? 'ВКЛ' : 'ВЫКЛ'}`;
-                });
-
-                this.dom.btnToggleAudio.addEventListener('click', () => {
-                    if (!this.localStream) return;
-                    this.isAudioEnabled = !this.isAudioEnabled;
-                    this.localStream.getAudioTracks().forEach(track => track.enabled = this.isAudioEnabled);
-                    this.dom.btnToggleAudio.textContent = `Аудио: ${this.isAudioEnabled ? 'ВКЛ' : 'ВЫКЛ'}`;
-                });
-
-                this.dom.btnSend.addEventListener('click', () => {
-                    this.sendChatMessage();
-                });
-
-                this.dom.chatInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.sendChatMessage();
+                this.dom.btnSend.addEventListener('click', () => this.sendMessage());
+                this.dom.chatInput.addEventListener('keypress', e => {
+                    if (e.key === 'Enter') this.sendMessage();
                 });
             }
 
             bindCallEvents(call) {
-                call.on('stream', (remoteStream) => {
+                call.on('stream', remoteStream => {
                     this.dom.remoteVideo.srcObject = remoteStream;
                     this.dom.btnHangup.disabled = false;
-                    this.dom.statusText.textContent = 'Защищенный видеопоток активен';
-                    this.dom.connectionStats.textContent = 'ICE: Connected (P2P Direct)';
+                    this.setStatus(true, 'Защищенное соединение установлено');
                 });
-
-                call.on('close', () => {
-                    this.terminateConnection();
-                });
-
-                call.on('error', () => {
-                    this.terminateConnection();
-                });
+                call.on('close', () => this.terminate());
+                call.on('error', () => this.terminate());
             }
 
             setupDataConnection(conn) {
                 this.dataConnection = conn;
-
                 conn.on('open', () => {
                     this.dom.chatInput.disabled = false;
                     this.dom.btnSend.disabled = false;
-                    this.logSystemMessage('Канал данных защищен и активен.');
+                    this.addSystemMessage('Канал чата успешно открыт.');
                 });
-
-                conn.on('data', (data) => {
-                    this.appendChatMessage(data, false);
+                conn.on('data', data => {
+                    this.appendMessage(data.text, data.time, false);
                 });
-
                 conn.on('close', () => {
-                    this.logSystemMessage('Канал данных закрыт удаленным узлом.');
+                    this.addSystemMessage('Канал чата закрыт собеседником.');
                 });
             }
 
-            sendChatMessage() {
+            sendMessage() {
                 const text = this.dom.chatInput.value.trim();
                 if (!text || !this.dataConnection) return;
 
-                const payload = { text, timestamp: new Date().toLocaleTimeString() };
-                this.dataConnection.send(payload);
-                this.appendChatMessage(payload, true);
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                this.dataConnection.send({ text, time });
+                this.appendMessage(text, time, true);
                 this.dom.chatInput.value = '';
             }
 
-            appendChatMessage(data, isSelf) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `chat-msg ${isSelf ? 'self' : ''}`;
-                msgDiv.innerHTML = `
-                    <div class="msg-bubble">${this.escapeHTML(data.text)}</div>
-                    <div class="msg-info">${isSelf ? 'Вы' : 'Собеседник'} • ${data.timestamp || ''}</div>
+            appendMessage(text, time, isSelf) {
+                const div = document.createElement('div');
+                div.className = `message-item ${isSelf ? 'self' : ''}`;
+                div.innerHTML = `
+                    <div class="bubble">${this.escape(text)}</div>
+                    <div class="msg-time">${time}</div>
                 `;
-                this.dom.chatMessages.appendChild(msgDiv);
-                this.dom.chatMessages.scrollTop = this.dom.chatMessages.scrollHeight;
+                this.dom.messagesContainer.appendChild(div);
+                this.dom.messagesContainer.scrollTop = this.dom.messagesContainer.scrollHeight;
             }
 
-            logSystemMessage(text) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'chat-msg';
-                msgDiv.innerHTML = `
-                    <div class="msg-bubble" style="background-color: var(--sys-panel); color: var(--text-secondary);">${this.escapeHTML(text)}</div>
-                    <div class="msg-info">System Daemon</div>
-                `;
-                this.dom.chatMessages.appendChild(msgDiv);
-                this.dom.chatMessages.scrollTop = this.dom.chatMessages.scrollHeight;
+            addSystemMessage(text) {
+                const div = document.createElement('div');
+                div.className = 'message-item';
+                div.innerHTML = `<div class="bubble" style="color: var(--text-secondary); background: transparent; border: 1px solid var(--border-color);">${this.escape(text)}</div>`;
+                this.dom.messagesContainer.appendChild(div);
+                this.dom.messagesContainer.scrollTop = this.dom.messagesContainer.scrollHeight;
             }
 
-            terminateConnection() {
-                if (this.currentCall) {
-                    this.currentCall.close();
-                    this.currentCall = null;
-                }
-                if (this.dataConnection) {
-                    this.dataConnection.close();
-                    this.dataConnection = null;
-                }
+            terminate() {
+                if (this.currentCall) { this.currentCall.close(); this.currentCall = null; }
+                if (this.dataConnection) { this.dataConnection.close(); this.dataConnection = null; }
 
                 this.dom.remoteVideo.srcObject = null;
                 this.dom.btnCall.disabled = false;
@@ -645,42 +509,22 @@
                 this.dom.btnHangup.disabled = true;
                 this.dom.chatInput.disabled = true;
                 this.dom.btnSend.disabled = true;
-
-                this.dom.statusText.textContent = 'Соединение разорвано. Ожидание вызова';
-                this.dom.connectionStats.textContent = 'ICE: Standby';
-                this.logSystemMessage('Сессия завершена.');
+                this.setStatus(true, 'Сессия завершена. Ожидание вызова');
             }
 
-            updateStatus(isActive, text) {
-                if (isActive) {
-                    this.dom.statusDot.classList.add('active');
-                } else {
-                    this.dom.statusDot.classList.remove('active');
-                }
+            setStatus(active, text) {
+                if (active) this.dom.statusDot.classList.add('active');
+                else this.dom.statusDot.classList.remove('active');
                 this.dom.statusText.textContent = text;
             }
 
-            initTimer() {
-                let seconds = 0;
-                setInterval(() => {
-                    seconds++;
-                    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-                    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-                    const s = (seconds % 60).toString().padStart(2, '0');
-                    this.dom.globalTimer.textContent = `${h}:${m}:${s}`;
-                }, 1000);
-            }
-
-            escapeHTML(str) {
-                return str.replace(/[&<>'"]/g, 
-                    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-                );
+            escape(str) {
+                return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
             }
         }
 
-        // Инициализация при завершении загрузки DOM
         document.addEventListener('DOMContentLoaded', () => {
-            window.appInstance = new NodeStudioApp();
+            window.app = new P2PApp();
         });
     </script>
 </body>
