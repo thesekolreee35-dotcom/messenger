@@ -17,8 +17,8 @@
             --accent-hover: #1d39c4;
             --danger: #ff4d4f;
             --success: #52c41a;
-            --radius-outer: 24px;
-            --radius-inner: 16px;
+            --radius-outer: 28px;
+            --radius-inner: 18px;
             --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
@@ -41,7 +41,7 @@
 
         /* Шапка */
         header.app-header {
-            height: 64px;
+            height: 68px;
             background-color: var(--surface-color);
             border-bottom: 1px solid var(--border-color);
             display: flex;
@@ -58,8 +58,8 @@
         }
 
         .brand-logo {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             object-fit: cover;
             border: 1px solid var(--border-color);
@@ -98,14 +98,14 @@
             background-color: var(--success);
         }
 
-        /* Кнопка с тремя точками */
+        /* Кнопка с тремя точками в углу */
         .icon-btn {
             background: var(--surface-elevated);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -125,7 +125,7 @@
             grid-template-columns: 2fr 1fr;
             gap: 24px;
             padding: 24px 32px;
-            height: calc(100vh - 64px);
+            height: calc(100vh - 68px);
         }
 
         .column {
@@ -153,6 +153,9 @@
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .control-panel {
@@ -233,6 +236,12 @@
             background-color: rgba(255, 77, 79, 0.25);
         }
 
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 10px;
+        }
+
         .btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
@@ -271,7 +280,7 @@
             background-color: rgba(6, 8, 12, 0.7);
             backdrop-filter: blur(12px);
             padding: 6px 12px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 13px;
             font-weight: 500;
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -287,12 +296,41 @@
             object-fit: cover;
         }
 
-        /* Чат */
-        .chat-card {
-            flex-grow: 1;
+        /* Правая колонка: Вкладки (Чат / Друзья) */
+        .tabs-header {
             display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--surface-elevated);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-content {
+            display: none;
             flex-direction: column;
+            flex-grow: 1;
+            gap: 12px;
             overflow: hidden;
+        }
+
+        .tab-content.active {
+            display: flex;
         }
 
         .messages-container {
@@ -338,7 +376,7 @@
         .bubble {
             background-color: #212c40;
             padding: 10px 14px;
-            border-radius: 14px;
+            border-radius: 16px;
             line-height: 1.4;
             word-break: break-word;
             border: 1px solid var(--border-color);
@@ -353,18 +391,63 @@
         .chat-input-row {
             display: flex;
             gap: 10px;
-            margin-top: 12px;
         }
 
-        /* Модальное окно настроек */
+        /* Список друзей */
+        .friends-list {
+            flex-grow: 1;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-inner);
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface-color);
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .friend-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .friend-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .friend-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .friend-id {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Модальные окна */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -384,11 +467,11 @@
             border: 1px solid var(--border-color);
             border-radius: var(--radius-outer);
             width: 440px;
-            padding: 28px;
+            padding: 32px;
             display: flex;
             flex-direction: column;
             gap: 20px;
-            box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.6);
             transform: scale(0.95);
             transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -409,7 +492,7 @@
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
         }
 
@@ -436,7 +519,6 @@
             font-size: 14px;
         }
 
-        /* Кастомный чекбокс */
         .switch {
             position: relative;
             display: inline-block;
@@ -444,11 +526,7 @@
             height: 24px;
         }
 
-        .switch input { 
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .switch input { opacity: 0; width: 0; height: 0; }
 
         .slider {
             position: absolute;
@@ -471,20 +549,15 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider {
-            background-color: var(--accent);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(20px);
-        }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(20px); }
     </style>
 </head>
 <body>
 
     <header class="app-header">
         <div class="brand-section">
-            <img id="header-avatar" class="brand-logo" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" alt="Avatar">
+            <img id="header-avatar" class="brand-logo" src="" alt="Avatar">
             <div class="brand-title" id="header-nickname">Nexus Node</div>
         </div>
         <div class="header-right">
@@ -492,11 +565,12 @@
                 <span class="status-dot" id="status-dot"></span>
                 <span id="status-text">Инициализация...</span>
             </div>
+            <!-- Три точки в правом верхнем углу -->
             <button class="icon-btn" id="btn-settings-toggle" title="Настройки и профиль">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="5" r="2"/>
-                    <circle cx="12" cy="12" r="2"/>
-                    <circle cx="12" cy="19" r="2"/>
+                    <circle cx="12" cy="5" r="2.5"/>
+                    <circle cx="12" cy="12" r="2.5"/>
+                    <circle cx="12" cy="19" r="2.5"/>
                 </svg>
             </button>
         </div>
@@ -535,41 +609,90 @@
             </div>
         </div>
 
-        <!-- Правая колонка: Чат -->
+        <!-- Правая колонка: Чат и Друзья -->
         <div class="column">
-            <div class="card chat-card">
-                <div class="card-title">Защищенный чат узла</div>
-                <div class="messages-container" id="messages-container">
-                    <div class="message-item">
-                        <div class="bubble" style="color: var(--text-secondary); background: transparent; border: 1px dashed var(--border-color);">Система готова. Ожидание подключения...</div>
+            <div class="card chat-card" style="flex-grow: 1; display: flex; flex-direction: column;">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="tab-chat">Чат сессии</button>
+                    <button class="tab-btn" data-tab="tab-friends">Друзья</button>
+                </div>
+
+                <!-- Вкладка чата -->
+                <div class="tab-content active" id="tab-chat">
+                    <div class="messages-container" id="messages-container">
+                        <div class="message-item">
+                            <div class="bubble" style="color: var(--text-secondary); background: transparent; border: 1px dashed var(--border-color);">Система готова. Ожидание подключения...</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-row">
+                        <input type="text" id="chat-input" placeholder="Введите сообщение..." disabled>
+                        <button class="btn" id="btn-send" disabled>Отпр.</button>
                     </div>
                 </div>
-                <div class="chat-input-row">
-                    <input type="text" id="chat-input" placeholder="Введите сообщение..." disabled>
-                    <button class="btn" id="btn-send" disabled>Отпр.</button>
+
+                <!-- Вкладка друзей -->
+                <div class="tab-content" id="tab-friends">
+                    <div class="chat-input-row">
+                        <input type="text" id="friend-id-input" placeholder="ID друга..." autocomplete="off">
+                        <input type="text" id="friend-name-input" placeholder="Имя..." autocomplete="off" style="max-width: 110px;">
+                        <button class="btn" id="btn-add-friend">Добавить</button>
+                    </div>
+                    <div class="friends-list" id="friends-list-container">
+                        <div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-top: 20px;">Список друзей пуст</div>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Модальное окно настроек и профиля -->
+    <!-- Модальное окно Регистрации (Встречает при первом запуске) -->
+    <div class="modal-overlay" id="register-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <span>Регистрация профиля</span>
+            </div>
+            <div class="setting-group">
+                <span class="setting-label">Никнейм</span>
+                <input type="text" id="reg-nickname" placeholder="Ваш никнейм...">
+            </div>
+            <div class="setting-group">
+                <span class="setting-label">Ссылка на аватару (URL)</span>
+                <input type="text" id="reg-avatar" placeholder="https://example.com/avatar.jpg" value="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100">
+            </div>
+            <button class="btn" id="btn-register-submit" style="width: 100%; margin-top: 10px;">Создать аккаунт</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно Ограничения аккаунтов (VPN / Лимит) -->
+    <div class="modal-overlay" id="limit-modal">
+        <div class="modal" style="border-color: var(--danger);">
+            <div class="modal-header" style="color: var(--danger);">
+                <span>Ошибка создания</span>
+            </div>
+            <div style="font-size: 15px; line-height: 1.5; color: var(--text-main);">
+                Похоже вы пытались создать слишком много аккаунтов!
+            </div>
+            <div style="font-size: 13px; color: var(--text-secondary);">
+                Превышен лимит создания профилей с вашего IP-адреса / устройства (максимум 3 аккаунта).
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно настроек -->
     <div class="modal-overlay" id="settings-modal">
         <div class="modal">
             <div class="modal-header">
                 <span>Настройки и профиль</span>
                 <button class="modal-close" id="btn-modal-close">&times;</button>
             </div>
-
             <div class="setting-group">
                 <span class="setting-label">Ваш никнейм</span>
-                <input type="text" id="input-nickname" placeholder="Введите ник...">
+                <input type="text" id="input-nickname">
             </div>
-
             <div class="setting-group">
                 <span class="setting-label">Ссылка на аватарку (URL)</span>
-                <input type="text" id="input-avatar" placeholder="https://example.com/avatar.jpg">
+                <input type="text" id="input-avatar">
             </div>
-
             <div class="setting-group">
                 <span class="setting-label">Аудио и связь</span>
                 <div class="toggle-row">
@@ -580,8 +703,7 @@
                     </label>
                 </div>
             </div>
-
-            <button class="btn" id="btn-save-settings" style="width: 100%; margin-top: 10px;">Сохранить настройки</button>
+            <button class="btn" id="btn-save-settings" style="width: 100%; margin-top: 10px;">Сохранить изменения</button>
         </div>
     </div>
 
@@ -593,14 +715,49 @@
                 this.currentCall = null;
                 this.dataConnection = null;
 
-                this.profile = {
-                    nickname: localStorage.getItem('nexus_nick') || 'User_' + Math.floor(Math.random() * 899 + 100),
-                    avatar: localStorage.getItem('nexus_avatar') || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100',
-                    noiseSuppression: localStorage.getItem('nexus_noise') !== 'false'
-                };
+                this.checkAuthAndLimits();
+            }
+
+            checkAuthAndLimits() {
+                let accountsRegistry = JSON.parse(localStorage.getItem('nexus_ip_registry') || '[]');
+                const savedUser = localStorage.getItem('nexus_current_user');
+
+                if (!savedUser) {
+                    // Проверяем лимит: если с этого IP/устройства пытались создать больше 3 аккаунтов
+                    if (accountsRegistry.length >= 3) {
+                        document.getElementById('limit-modal').classList.add('open');
+                        return;
+                    }
+                    // Показываем окно регистрации
+                    document.getElementById('register-modal').classList.add('open');
+                    document.getElementById('btn-register-submit').addEventListener('click', () => {
+                        const nick = document.getElementById('reg-nickname').value.trim();
+                        const avatar = document.getElementById('reg-avatar').value.trim() || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100';
+                        
+                        if (!nick) return;
+
+                        accountsRegistry.push({ nick, time: Date.now() });
+                        localStorage.setItem('nexus_ip_registry', JSON.stringify(accountsRegistry));
+
+                        const userData = { nickname: nick, avatar: avatar, noiseSuppression: true };
+                        localStorage.setItem('nexus_current_user', JSON.stringify(userData));
+
+                        document.getElementById('register-modal').classList.remove('open');
+                        this.initApp(userData);
+                    });
+                } else {
+                    // Автоматический вход по сохраненным логам
+                    this.initApp(JSON.parse(savedUser));
+                }
+            }
+
+            initApp(userProfile) {
+                this.profile = userProfile;
+                this.friends = JSON.parse(localStorage.getItem('nexus_friends') || '[]');
 
                 this.initDOM();
                 this.applyProfileToUI();
+                this.renderFriends();
                 this.initPeer();
                 this.initMedia();
                 this.initEvents();
@@ -631,7 +788,12 @@
                     btnSaveSettings: document.getElementById('btn-save-settings'),
                     inputNickname: document.getElementById('input-nickname'),
                     inputAvatar: document.getElementById('input-avatar'),
-                    toggleNoise: document.getElementById('toggle-noise')
+                    toggleNoise: document.getElementById('toggle-noise'),
+
+                    friendIdInput: document.getElementById('friend-id-input'),
+                    friendNameInput: document.getElementById('friend-name-input'),
+                    btnAddFriend: document.getElementById('btn-add-friend'),
+                    friendsListContainer: document.getElementById('friends-list-container')
                 };
             }
 
@@ -693,7 +855,31 @@
             }
 
             initEvents() {
-                // Настройки модалка
+                // Переключение вкладок (Чат / Друзья)
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                        e.target.classList.add('active');
+                        document.getElementById(e.target.dataset.tab).classList.add('active');
+                    });
+                });
+
+                // Добавление в друзья
+                this.dom.btnAddFriend.addEventListener('click', () => {
+                    const id = this.dom.friendIdInput.value.trim();
+                    const name = this.dom.friendNameInput.value.trim() || 'Друг';
+                    if (!id) return;
+
+                    this.friends.push({ id, name, avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100' });
+                    localStorage.setItem('nexus_friends', JSON.stringify(this.friends));
+                    this.renderFriends();
+
+                    this.dom.friendIdInput.value = '';
+                    this.dom.friendNameInput.value = '';
+                });
+
+                // Настройки модалка (три точки)
                 this.dom.btnSettingsToggle.addEventListener('click', () => {
                     this.dom.settingsModal.classList.add('open');
                 });
@@ -711,9 +897,7 @@
                     this.profile.avatar = this.dom.inputAvatar.value.trim() || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100';
                     const newNoise = this.dom.toggleNoise.checked;
 
-                    localStorage.setItem('nexus_nick', this.profile.nickname);
-                    localStorage.setItem('nexus_avatar', this.profile.avatar);
-                    localStorage.setItem('nexus_noise', newNoise);
+                    localStorage.setItem('nexus_current_user', JSON.stringify(this.profile));
 
                     this.applyProfileToUI();
                     this.dom.settingsModal.classList.remove('open');
@@ -747,6 +931,44 @@
                 this.dom.chatInput.addEventListener('keypress', e => {
                     if (e.key === 'Enter') this.sendMessage();
                 });
+            }
+
+            renderFriends() {
+                if (this.friends.length === 0) {
+                    this.dom.friendsListContainer.innerHTML = `<div style="color: var(--text-secondary); font-size: 13px; text-align: center; margin-top: 20px;">Список друзей пуст</div>`;
+                    return;
+                }
+                this.dom.friendsListContainer.innerHTML = '';
+                this.friends.forEach((friend, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'friend-item';
+                    div.innerHTML = `
+                        <div class="friend-info">
+                            <img class="friend-avatar" src="${friend.avatar}" alt="">
+                            <div>
+                                <div class="friend-name">${this.escape(friend.name)}</div>
+                                <div class="friend-id">${friend.id}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn btn-sm" onclick="app.callFriend('${friend.id}')">Вызов</button>
+                            <button class="btn btn-sm btn-danger" onclick="app.removeFriend(${index})">Удалить</button>
+                        </div>
+                    `;
+                    this.dom.friendsListContainer.appendChild(div);
+                });
+            }
+
+            callFriend(id) {
+                this.dom.targetId.value = id;
+                document.querySelector('[data-tab="tab-chat"]').click();
+                this.dom.btnCall.click();
+            }
+
+            removeFriend(index) {
+                this.friends.splice(index, 1);
+                localStorage.setItem('nexus_friends', JSON.stringify(this.friends));
+                this.renderFriends();
             }
 
             bindCallEvents(call) {
