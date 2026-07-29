@@ -3,148 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P2P Call - Modern UI</title>
+    <title>P2P Call - ГАРАНТИРОВАННЫЙ КЛИК</title>
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <style>
         :root {
-            --bg-color: #0b101b;
-            --card-bg: #151b2c;
-            --accent: #4c82e6;
-            --accent-hover: #3b66c7;
-            --text-primary: #f2f3f5;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            --bg-color: #0b101b; --card-bg: #151b2c; --accent: #4c82e6; --accent-hover: #3b66c7; --text-primary: #f2f3f5; --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        .call-wrapper {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            width: 800px;
-            max-width: 90%;
-            box-sizing: border-box;
-        }
-
-        h2 {
-            margin-top: 0;
-            text-align: center;
-            color: var(--accent);
-        }
-
-        .id-panel {
-            background-color: rgba(76, 130, 230, 0.1);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 25px;
-            border: 1px solid rgba(76, 130, 230, 0.2);
-        }
-
-        #my-id {
-            color: var(--accent);
-            font-weight: bold;
-            font-family: monospace;
-            background: #101422;
-            padding: 4px 8px;
-            border-radius: 4px;
-            user-select: all;
-        }
-
-        .controls-panel {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        input, button {
-            padding: 12px 18px;
-            border-radius: 8px;
-            border: none;
-            font-size: 15px;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        input {
-            background-color: #101422;
-            color: var(--text-primary);
-            flex-grow: 1;
-            max-width: 300px;
-        }
-
-        button {
-            background-color: var(--accent);
-            color: var(--text-primary);
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        button:hover {
-            background-color: var(--accent-hover);
-        }
-
-        button:active {
-            transform: scale(0.96);
-        }
-
-        button:disabled {
-            background-color: #2c3854;
-            color: #6a7999;
-            cursor: not-allowed;
-        }
-
-        /* Строка статуса звонка */
-        #status-text {
-            text-align: center;
-            font-size: 13px;
-            color: #949ba4;
-            min-height: 20px;
-            margin-bottom: 20px;
-        }
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background-color: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .video-label {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-primary); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .call-wrapper { background-color: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: var(--shadow); width: 800px; max-width: 90%; box-sizing: border-box; }
+        h2 { margin-top: 0; text-align: center; color: var(--accent); }
+        .id-panel { background-color: rgba(76, 130, 230, 0.1); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 25px; border: 1px solid rgba(76, 130, 230, 0.2); }
+        #my-id { color: var(--accent); font-weight: bold; font-family: monospace; background: #101422; padding: 4px 8px; border-radius: 4px; user-select: all; }
+        .controls-panel { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; }
+        input, button { padding: 12px 18px; border-radius: 8px; border: none; font-size: 15px; outline: none; transition: all 0.2s ease; }
+        input { background-color: #101422; color: var(--text-primary); flex-grow: 1; max-width: 300px; border: 1px solid transparent; }
+        input:focus { border-color: var(--accent); }
+        button { background-color: var(--accent); color: var(--text-primary); cursor: pointer; font-weight: 600; min-width: 130px; }
+        button:hover { background-color: var(--accent-hover); }
+        button:active { transform: scale(0.96); }
+        button:disabled { background-color: #2c3854; color: #6a7999; cursor: not-allowed; transform: none; }
+        #status-text { text-align: center; font-size: 13px; color: #949ba4; min-height: 20px; margin-bottom: 20px; font-style: italic; }
+        .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .video-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #000; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); border: 2px solid #1a2236; }
+        video { width: 100%; height: 100%; object-fit: cover; background: #000; }
+        .video-label { position: absolute; bottom: 10px; left: 10px; background: rgba(0, 0, 0, 0.6); padding: 4px 8px; border-radius: 4px; font-size: 12px; z-index: 10; }
     </style>
 </head>
 <body>
@@ -153,7 +35,7 @@
     <h2>P2P Video Call</h2>
     
     <div class="id-panel">
-        Твой ID соединения: <span id="my-id">Получение ID...</span>
+        Твой ID: <span id="my-id">Подключение...</span>
     </div>
 
     <div class="controls-panel">
@@ -161,33 +43,23 @@
         <button id="call-btn">Позвонить</button>
     </div>
     
-    <!-- Текст статуса -->
-    <div id="status-text">Ожидание подключения...</div>
+    <div id="status-text">Инициализация системы...</div>
 
     <div class="video-grid">
         <div class="video-container">
             <video id="local-video" autoplay muted playsinline></video>
-            <div class="video-label">Вы</div>
+            <div class="video-label">Вы (Локально)</div>
         </div>
-        <div class="video-container">
+        <div class="video-容器">
             <video id="remote-video" autoplay playsinline></video>
-            <div class="video-label">Собеседник</div>
+            <div class="video-label">Собеседник (Удаленно)</div>
         </div>
     </div>
 </div>
 
 <script>
-    const peer = new Peer({
-        config: {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun2.l.google.com:19302' }
-            ]
-        }
-    });
-
-    let localStream;
+    // 1. Сразу объявляем все переменные, чтобы они были доступны везде
+    let localStream = null;
     const localVideo = document.getElementById('local-video');
     const remoteVideo = document.getElementById('remote-video');
     const myIdSpan = document.getElementById('my-id');
@@ -195,77 +67,155 @@
     const callBtn = document.getElementById('call-btn');
     const statusText = document.getElementById('status-text');
 
-    // Доступ к камере
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
-            localStream = stream;
-            localVideo.srcObject = stream;
-            statusText.textContent = 'Камера подключена. Введи ID друга.';
-        })
-        .catch(err => {
-            console.error('Ошибка доступа к камере:', err);
-            statusText.textContent = 'Ошибка: разреши доступ к камере!';
-        });
-
-    peer.on('open', id => {
-        myIdSpan.textContent = id;
+    // 2. Инициализируем PeerJS сразу
+    const peer = new Peer({
+        config: {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        }
     });
 
-    // Нажатие на кнопку «Позвонить»
+    // Ошибка сети PeerJS
+    peer.on('error', err => {
+        console.error('PeerJS Error:', err);
+        statusText.textContent = 'Ошибка сети PeerJS: ' + err.type;
+        statusText.style.color = '#ef4444';
+        resetCallButton();
+    });
+
+    // Получили ID от сервера
+    peer.on('open', id => {
+        console.log('My ID:', id);
+        myIdSpan.textContent = id;
+        statusText.textContent = 'Готов к звонку. Введи ID друга.';
+        statusText.style.color = '#949ba4';
+        callBtn.disabled = false; // Кнопка гарантированно активна
+    });
+
+
+    // 3. ФУНКЦИЯ ЗАПРОСА КАМЕРЫ (Асинхронная, не блокирует код)
+    async function startCamera() {
+        statusText.textContent = 'Запрос доступа к камере...';
+        try {
+            // Пробуем взять и видео, и аудио
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            localStream = stream;
+            localVideo.srcObject = stream;
+            statusText.textContent = 'Камера и микрофон подключены.';
+            console.log('Camera started successfully.');
+        } catch (err) {
+            console.error('Camera access denied or failed:', err);
+            statusText.textContent = 'Режим: ТОЛЬКО АУДИО (камера недоступна).';
+            statusText.style.color = '#f59e0b';
+            
+            // Если камера сдохла, пробуем взять хотя бы микрофон
+            try {
+                const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                localStream = audioStream;
+                console.log('Audio started successfully (fallback).');
+            } catch (audioErr) {
+                console.error('Audio access also denied:', audioErr);
+                statusText.textContent = 'Ошибка: нет доступа ни к камере, ни к микрофону!';
+                statusText.style.color = '#ef4444';
+                // localStream остается null, но код не падает
+            }
+        }
+    }
+
+    // Запускаем камеру в фоне, не дожидаясь результата
+    startCamera();
+
+
+    // 4. ЛОГИКА КНОПКИ (Обработчик ставится СРАЗУ)
     callBtn.addEventListener('click', () => {
         const partnerId = partnerIdInput.value.trim();
         
+        console.log('Click detect. Partner ID:', partnerId); // Проверка клика в консоли
+
         if (!partnerId) {
-            return alert('Сначала введи ID друга!');
-        }
-        if (!localStream) {
-            return alert('Камера еще не подключилась, подожди 2 секунды.');
+            alert('Сначала введи ID друга!');
+            return;
         }
 
-        // ВИЗУАЛЬНАЯ ОТДАЧА НА КЛИК
+        // Визуальная реакция на клик
         callBtn.disabled = true;
         callBtn.textContent = 'Звоним...';
-        statusText.textContent = 'Отправка вызова... Ждем ответа от друга.';
+        statusText.textContent = 'Соединение с ' + partnerId + '...';
+        statusText.style.color = '#949ba4';
 
-        const call = peer.call(partnerId, localStream);
+        // Создаем пустой поток, если getUserMedia вообще сдох, чтобы PeerJS не ругался
+        const streamToSend = localStream || new MediaStream();
 
+        console.log('Initiating call to:', partnerId, 'with stream:', streamToSend);
+        
+        // ЗВОНИМ
+        const call = peer.call(partnerId, streamToSend);
+
+        if (!call) {
+            statusText.textContent = 'Ошибка: не удалось создать вызов.';
+            resetCallButton();
+            return;
+        }
+
+        // Ждем поток от друга
         call.on('stream', remoteStream => {
+            console.log('Remote stream received.');
             remoteVideo.srcObject = remoteStream;
-            callBtn.textContent = 'В эфире';
-            statusText.textContent = 'Соединение успешно установлено!';
+            statusText.textContent = 'В эфире!';
+            statusText.style.color = '#10b981';
+            callBtn.textContent = 'Связь ОК';
         });
 
         call.on('error', err => {
-            console.error('Ошибка звонка:', err);
-            statusText.textContent = 'Ошибка вызова. Проверь ID.';
-            callBtn.disabled = false;
-            callBtn.textContent = 'Позвонить';
+            console.error('Call Error:', err);
+            statusText.textContent = 'Сбой вызова. Друг в сети?';
+            statusText.style.color = '#ef4444';
+            resetCallButton();
         });
+        
+        // Хак для завершения висения, если друг не отвечает долго
+        setTimeout(() => {
+            if (callBtn.textContent === 'Звоним...') {
+                statusText.textContent = 'Друг долго не отвечает. Сброс.';
+                call.close();
+                resetCallButton();
+            }
+        }, 15000);
     });
 
-    // Входящий звонок
+
+    // 5. ВХОДЯЩИЙ ЗВОНОК
     peer.on('call', call => {
-        statusText.textContent = 'Входящий звонок от: ' + call.peer;
+        console.log('Incoming call from:', call.peer);
+        statusText.textContent = 'ВХОДЯЩИЙ ЗВОНОК!';
+        statusText.style.color = '#4c82e6';
         
         if (confirm('Принять звонок от ' + call.peer + '?')) {
-            call.answer(localStream);
+            // Отвечаем тем, что есть (камера, только микрофон или пустота)
+            call.answer(localStream || new MediaStream());
+            
             call.on('stream', remoteStream => {
+                console.log('Remote stream received (incoming).');
                 remoteVideo.srcObject = remoteStream;
-                statusText.textContent = 'Соединение установлено!';
-                callBtn.textContent = 'В эфире';
+                statusText.textContent = 'В эфире!';
+                statusText.style.color = '#10b981';
+                callBtn.textContent = 'Связь ОК';
                 callBtn.disabled = true;
             });
         } else {
+            call.close();
             statusText.textContent = 'Звонок отклонен.';
+            statusText.style.color = '#949ba4';
         }
     });
 
-    peer.on('error', err => {
-        console.error('Ошибка PeerJS:', err);
-        statusText.textContent = 'Ошибка сети: ' + err.type;
+    function resetCallButton() {
         callBtn.disabled = false;
         callBtn.textContent = 'Позвонить';
-    });
+    }
+
 </script>
 
 </body>
