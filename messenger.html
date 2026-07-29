@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Call - Modern UI</title>
+    <!-- Подключаем библиотеку PeerJS -->
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b101b;
+            --card-bg: #151b2c;
+            --accent: #4c82e6;
+            --accent-hover: #3b66c7;
+            --text-primary: #f2f3f5;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .call-wrapper {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            width: 800px;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-top: 0;
+            text-align: center;
+            color: var(--accent);
+        }
+
+        .id-panel {
+            background-color: rgba(76, 130, 230, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 1px solid rgba(76, 130, 230, 0.2);
+        }
+
+        #my-id {
+            color: var(--accent);
+            font-weight: bold;
+            font-family: monospace;
+            background: #101422;
+            padding: 4px 8px;
+            border-radius: 4px;
+            user-select: all;
+        }
+
+        .controls-panel {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        input, button {
+            padding: 12px 18px;
+            border-radius: 8px;
+            border: none;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input {
+            background-color: #101422;
+            color: var(--text-primary);
+            flex-grow: 1;
+            max-width: 300px;
+        }
+
+        button {
+            background-color: var(--accent);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="call-wrapper">
+    <h2>P2P Video Call</h2>
+    
+    <div class="id-panel">
+        Твой ID соединения: <span id="my-id">Получение ID...</span>
+    </div>
+
+    <div class="controls-panel">
+        <input type="text" id="partner-id" placeholder="Введи ID друга...">
+        <button id="call-btn">Позвонить</button>
+    </div>
+
+    <div class="video-grid">
+        <div class="video-container">
+            <video id="local-video" autoplay muted playsinline></video>
+            <div class="video-label">Вы</div>
+        </div>
+        <div class="video-container">
+            <video id="remote-video" autoplay playsinline></video>
+            <div class="video-label">Собеседник</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Подключаем STUN-серверы Google для пробития NAT/роутеров
+    const peer = new Peer({
+        config: {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' }
+            ]
+        }
+    });
+
+    let localStream;
+    const localVideo = document.getElementById('local-video');
+    const remoteVideo = document.getElementById('remote-video');
+    const myIdSpan = document.getElementById('my-id');
+    const partnerIdInput = document.getElementById('partner-id');
+    const callBtn = document.getElementById('call-btn');
+
+    // 1. Запрашиваем доступ к камере и микрофону
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+            localStream = stream;
+            localVideo.srcObject = stream;
+        })
+        .catch(err => {
+            console.error('Ошибка доступа к камере:', err);
+            alert('Нужно разрешить доступ к камере и микрофону!');
+        });
+
+    // 2. Показываем ID, когда сервер выдаст его
+    peer.on('open', id => {
+        myIdSpan.textContent = id;
+    });
+
+    // 3. Исходящий звонок
+    callBtn.addEventListener('click', () => {
+        const partnerId = partnerIdInput.value.trim();
+        if (!partnerId) return alert('Сначала введи ID друга!');
+        if (!localStream) return alert('Камера еще не подключилась, подожди пару секунд.');
+
+        const call = peer.call(partnerId, localStream);
+
+        call.on('stream', remoteStream => {
+            remoteVideo.srcObject = remoteStream;
+        });
+
+        call.on('error', err => {
+            console.error('Ошибка звонка:', err);
+            alert('Не удалось соединиться.');
+        });
+    });
+
+    // 4. Входящий звонок
+    peer.on('call', call => {
+        if (confirm('Принять звонок?')) {
+            call.answer(localStream);
+            call.on('stream', remoteStream => {
+                remoteVideo.srcObject = remoteStream;
+            });
+        }
+    });
+
+    // Логирование ошибок PeerJS
+    peer.on('error', err => {
+        console.error('Ошибка PeerJS:', err.type, err);
+    });
+</script>
+
+</body>
+</html>
