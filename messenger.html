@@ -3,32 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bacon — Premium P2P</title>
+    <title>Bacon — Enterprise P2P Suite</title>
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         :root {
-            /* Чистая нейтральная серая палитра (RGB каналы равны) */
+            /* Абсолютно нейтральная монохромная палитра (R=G=B везде) */
             --bg-body: #0a0a0a;
-            --bg-sidebar: #141414;
-            --bg-main: #1a1a1a;
-            --bg-modal: #1a1a1a;
+            --bg-sidebar: #121212;
+            --bg-main: #181818;
+            --bg-modal: #181818;
+            --bg-element: #222222;
+            --bg-hover: #2a2a2a;
             
             --border-light: rgba(255, 255, 255, 0.08);
-            --border-focus: rgba(255, 255, 255, 0.3);
+            --border-focus: rgba(255, 255, 255, 0.35);
             
             --accent-primary: #f0f0f0;
             --accent-hover: #ffffff;
             
             --text-primary: #ffffff;
             --text-secondary: #adadad;
-            --text-muted: #787878;
+            --text-muted: #757575;
             
-            --radius-xl: 24px;
-            --radius-lg: 16px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
+            --radius-xl: 20px;
+            --radius-lg: 14px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
             
             --inertia-easing: cubic-bezier(0.16, 1, 0.3, 1);
             --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -47,13 +49,18 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Плавное появление */
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #454545; }
+
         .fade-in {
-            animation: fadeIn 0.5s var(--inertia-easing) forwards;
+            animation: fadeIn 0.4s var(--inertia-easing) forwards;
             opacity: 0;
         }
         @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(10px); }
+            0% { opacity: 0; transform: translateY(8px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
@@ -69,24 +76,27 @@
             z-index: 10;
         }
 
-        .brand { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: #fff; }
+        .brand-block { display: flex; align-items: center; gap: 12px; }
+        .brand { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: #fff; }
+        .connection-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #757575; transition: background 0.3s; }
+        .connection-status-dot.online { background: #22c55e; box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
 
-        .header-actions { display: flex; align-items: center; gap: 20px; }
+        .header-actions { display: flex; align-items: center; gap: 16px; }
         
         .btn-text {
             background: none; border: none; color: var(--text-secondary);
-            font-size: 14px; font-weight: 500; cursor: pointer;
-            transition: color 0.2s;
+            font-size: 13px; font-weight: 500; cursor: pointer;
+            transition: color 0.2s; padding: 6px 10px; border-radius: var(--radius-sm);
         }
-        .btn-text:hover { color: var(--text-primary); }
+        .btn-text:hover { color: var(--text-primary); background: var(--bg-element); }
 
         .profile-trigger {
             display: flex; align-items: center; gap: 10px;
-            padding: 4px 12px 4px 4px; background: rgba(255,255,255,0.04);
+            padding: 4px 12px 4px 4px; background: var(--bg-element);
             border: 1px solid var(--border-light); border-radius: 30px;
             cursor: pointer; transition: all 0.2s;
         }
-        .profile-trigger:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+        .profile-trigger:hover { background: var(--bg-hover); border-color: var(--border-focus); }
         .profile-trigger img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
         .profile-trigger span { font-size: 13px; font-weight: 600; color: var(--text-primary); }
 
@@ -105,10 +115,12 @@
             border-radius: var(--radius-lg);
             display: flex; flex-direction: column;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
-        .sidebar-title { font-size: 13px; font-weight: 600; margin-bottom: 16px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
-        .friends-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .sidebar-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.8px; }
+        
+        .friends-list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 2px; }
         
         .friend-item {
             display: flex; align-items: center; justify-content: space-between;
@@ -116,10 +128,10 @@
             border-radius: var(--radius-md); border: 1px solid transparent;
             cursor: pointer; transition: all 0.2s;
         }
-        .friend-item:hover { background: rgba(255,255,255,0.04); border-color: var(--border-light); }
+        .friend-item:hover { background: var(--bg-element); border-color: var(--border-light); }
         .friend-meta { display: flex; align-items: center; gap: 12px; }
         .friend-meta img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
-        .friend-meta .name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+        .friend-meta .name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
 
         /* Main View */
         .main-view { display: flex; flex-direction: column; gap: 20px; }
@@ -128,72 +140,76 @@
             background: var(--bg-main);
             border: 1px solid var(--border-light);
             border-radius: var(--radius-lg);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
         .call-area {
-            height: 220px;
+            height: 240px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             position: relative; overflow: hidden; padding: 20px;
         }
         .video-container { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; }
         .video-circle {
-            width: 76px; height: 76px; border-radius: 50%; background: #000;
+            width: 80px; height: 80px; border-radius: 50%; background: #000;
             border: 2px solid var(--border-light); overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6); position: relative;
         }
         .video-circle video { width: 100%; height: 100%; object-fit: cover; }
+        .video-label {
+            position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+            font-size: 9px; background: rgba(0,0,0,0.7); padding: 1px 6px; border-radius: 4px; color: #fff;
+        }
         
-        .call-controls { display: flex; gap: 10px; width: 100%; max-width: 440px; justify-content: center; }
+        .call-controls { display: flex; gap: 10px; width: 100%; max-width: 480px; justify-content: center; }
         
         .input-base {
-            background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-light);
+            background: var(--bg-element); border: 1px solid var(--border-light);
             color: var(--text-primary); padding: 10px 16px; border-radius: var(--radius-md);
-            font-size: 14px; font-family: inherit; outline: none; 
+            font-size: 13px; font-family: inherit; outline: none; 
             transition: all 0.2s;
         }
         .input-base::placeholder { color: var(--text-muted); }
-        .input-base:focus { border-color: var(--border-focus); background: rgba(0, 0, 0, 0.6); }
+        .input-base:focus { border-color: var(--border-focus); background: var(--bg-hover); }
         
         .btn-primary {
             background: var(--accent-primary); color: #0a0a0a;
             border: none; padding: 10px 20px; border-radius: var(--radius-md);
-            font-size: 14px; font-weight: 600; cursor: pointer;
-            transition: all 0.2s;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-primary:hover:not(:disabled) { background: var(--accent-hover); box-shadow: 0 4px 15px rgba(255,255,255,0.15); }
-        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; background: #2c2c2c; color: var(--text-muted); }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; background: var(--bg-element); color: var(--text-muted); }
 
-        .btn-danger { background: #2c2c2c; color: #f87171; border: 1px solid var(--border-light); }
-        .btn-danger:hover:not(:disabled) { background: #3d3d3d; color: #fca5a5; }
+        .btn-danger { background: #262626; color: #f87171; border: 1px solid var(--border-light); }
+        .btn-danger:hover:not(:disabled) { background: #363636; color: #fca5a5; }
 
         /* Chat Area */
         .chat-area {
             flex-grow: 1; display: flex; flex-direction: column;
-            padding: 20px; overflow: hidden; max-height: calc(100vh - 340px);
+            padding: 20px; overflow: hidden; max-height: calc(100vh - 360px);
         }
-        .messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; padding-right: 4px; }
-        .msg { max-width: 70%; padding: 10px 16px; border-radius: var(--radius-md); font-size: 14px; line-height: 1.4; }
-        .msg.in { background: rgba(255,255,255,0.04); border: 1px solid var(--border-light); align-self: flex-start; color: var(--text-primary); }
+        .messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; padding-right: 6px; }
+        .msg { max-width: 70%; padding: 10px 16px; border-radius: var(--radius-md); font-size: 13px; line-height: 1.4; word-break: break-word; }
+        .msg.in { background: var(--bg-element); border: 1px solid var(--border-light); align-self: flex-start; color: var(--text-primary); }
         .msg.out { background: var(--accent-primary); color: #0a0a0a; align-self: flex-end; font-weight: 500; }
         
         .chat-input-wrapper { display: flex; gap: 10px; }
-        .chat-input-wrapper .input-base { flex-grow: 1; border-radius: var(--radius-md); }
+        .chat-input-wrapper .input-base { flex-grow: 1; }
         
         .btn-icon {
             width: 42px; height: 42px; border-radius: var(--radius-md); background: var(--accent-primary);
             color: #0a0a0a; border: none; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s;
+            cursor: pointer; transition: all 0.2s; flex-shrink: 0;
         }
         .btn-icon:hover:not(:disabled) { background: var(--accent-hover); }
-        .btn-icon:disabled { background: #2c2c2c; color: var(--text-muted); cursor: not-allowed; }
+        .btn-icon:disabled { background: var(--bg-element); color: var(--text-muted); cursor: not-allowed; }
 
-        /* Модальные окна с сильным блюром фона */
+        /* Модальные окна с мощным блюром фона */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.75); 
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             display: flex; align-items: center; justify-content: center;
             z-index: 1000; opacity: 0; pointer-events: none;
             transition: opacity 0.25s ease;
@@ -204,15 +220,15 @@
             background: var(--bg-modal);
             border: 1px solid var(--border-light);
             border-radius: var(--radius-xl); 
-            width: 900px; height: 620px;
+            width: 920px; height: 640px;
             display: flex; overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.85);
             transform: scale(0.96); transition: transform 0.25s var(--inertia-easing);
         }
         .modal-overlay.open .settings-window { transform: scale(1); }
 
         .set-sidebar {
-            width: 240px; background: rgba(0,0,0,0.25);
+            width: 240px; background: rgba(0,0,0,0.3);
             border-right: 1px solid var(--border-light); padding: 24px 16px;
             display: flex; flex-direction: column; gap: 24px;
         }
@@ -226,28 +242,31 @@
             padding: 9px 12px; border-radius: var(--radius-sm); color: var(--text-secondary);
             font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
         }
-        .set-nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
-        .set-nav-item.active { background: rgba(255,255,255,0.08); color: var(--text-primary); border: 1px solid var(--border-light); }
+        .set-nav-item:hover { background: var(--bg-element); color: var(--text-primary); }
+        .set-nav-item.active { background: var(--bg-element); color: var(--text-primary); border: 1px solid var(--border-light); }
 
         .set-content { flex-grow: 1; padding: 32px; position: relative; overflow-y: auto; }
-        .set-header { font-size: 22px; font-weight: 600; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; color: var(--text-primary); }
+        .set-pane { display: none; }
+        .set-pane.active { display: block; }
+        
+        .set-header { font-size: 20px; font-weight: 600; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; color: var(--text-primary); }
         
         .close-modal { 
             background: none; border: none; color: var(--text-muted); 
-            font-size: 24px; cursor: pointer; transition: color 0.2s; 
+            font-size: 20px; cursor: pointer; transition: color 0.2s; 
             width: 36px; height: 36px; border-radius: var(--radius-sm);
             display: flex; align-items: center; justify-content: center;
         }
-        .close-modal:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        .close-modal:hover { color: var(--text-primary); background: var(--bg-element); }
 
         .ds-profile-card {
             background: rgba(0,0,0,0.3); border: 1px solid var(--border-light);
             border-radius: var(--radius-lg); width: 360px; overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4); position: relative;
         }
         
         .ds-banner {
-            height: 120px; background-color: #2c2c2c; background-size: cover; background-position: center;
+            height: 120px; background-color: #262626; background-size: cover; background-position: center;
             position: relative; display: flex; justify-content: flex-end; padding: 10px;
         }
         
@@ -256,11 +275,11 @@
             width: 80px; height: 80px; border-radius: 50%;
             background: var(--bg-main); padding: 4px;
         }
-        .ds-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #2c2c2c; }
+        .ds-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #262626; }
         
         .edit-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center;
             opacity: 0; cursor: pointer; transition: opacity 0.2s; border-radius: inherit;
         }
         .ds-banner:hover .edit-overlay, .ds-avatar-wrap:hover .edit-overlay { opacity: 1; }
@@ -269,47 +288,59 @@
 
         .ds-info { padding: 48px 16px 20px; display: flex; flex-direction: column; gap: 12px; }
         .ds-field { 
-            background: rgba(0,0,0,0.4); border: 1px solid var(--border-light); 
+            background: var(--bg-element); border: 1px solid var(--border-light); 
             color: var(--text-primary); padding: 8px 12px; border-radius: var(--radius-sm); 
-            font-size: 14px; outline: none; transition: all 0.2s; width: 100%; font-family: inherit;
+            font-size: 13px; outline: none; transition: all 0.2s; width: 100%; font-family: inherit;
         }
-        .ds-field:focus { border-color: var(--border-focus); background: rgba(0,0,0,0.6); }
-        .ds-field.title { font-size: 18px; font-weight: 700; background: transparent; border: 1px solid transparent; padding: 4px; margin-bottom: -8px; }
-        .ds-field.title:focus { border-color: var(--border-light); background: rgba(0,0,0,0.3); }
-        .ds-field.tag { font-size: 13px; color: var(--text-secondary); background: transparent; border: 1px solid transparent; padding: 4px; }
-        .ds-field.tag:focus { border-color: var(--border-light); background: rgba(0,0,0,0.3); color: var(--text-primary); }
+        .ds-field:focus { border-color: var(--border-focus); background: var(--bg-hover); }
+        .ds-field.title { font-size: 17px; font-weight: 700; background: transparent; border: 1px solid transparent; padding: 4px; margin-bottom: -6px; }
+        .ds-field.title:focus { border-color: var(--border-light); background: var(--bg-element); }
+        .ds-field.tag { font-size: 12px; color: var(--text-secondary); background: transparent; border: 1px solid transparent; padding: 4px; }
+        .ds-field.tag:focus { border-color: var(--border-light); background: var(--bg-element); color: var(--text-primary); }
         
         .id-copy-block {
-            margin-top: 8px; padding: 12px; background: rgba(255,255,255,0.03);
+            margin-top: 6px; padding: 12px; background: rgba(255,255,255,0.02);
             border: 1px solid var(--border-light); border-radius: var(--radius-sm);
             display: flex; justify-content: space-between; align-items: center; cursor: pointer;
             transition: all 0.2s;
         }
-        .id-copy-block:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
-        .id-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-        .id-value { font-size: 13px; font-family: monospace; color: var(--text-primary); margin-top: 2px; }
+        .id-copy-block:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+        .id-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+        .id-value { font-size: 12px; font-family: monospace; color: var(--text-primary); margin-top: 2px; }
+
+        .settings-form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .settings-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+        .settings-select {
+            background: var(--bg-element); border: 1px solid var(--border-light);
+            color: var(--text-primary); padding: 10px 14px; border-radius: var(--radius-md);
+            font-size: 13px; font-family: inherit; outline: none; width: 100%; cursor: pointer;
+        }
+        .settings-select:focus { border-color: var(--border-focus); }
 
         .incoming-call-modal {
             background: var(--bg-modal); border: 1px solid var(--border-light);
             border-radius: var(--radius-xl); padding: 32px; text-align: center;
-            width: 320px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            width: 340px; box-shadow: 0 25px 60px rgba(0,0,0,0.8);
         }
         .caller-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid var(--border-light); }
-        .caller-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; color: var(--text-primary); }
-        .caller-status { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+        .caller-name { font-size: 17px; font-weight: 600; margin-bottom: 4px; color: var(--text-primary); }
+        .caller-status { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
         .inc-actions { display: flex; gap: 12px; justify-content: center; }
-        .btn-circle { width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .btn-circle { width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .btn-circle:hover { transform: scale(1.08); }
         .btn-accept { background: var(--accent-primary); color: #0a0a0a; }
-        .btn-reject { background: #2c2c2c; color: #f87171; border: 1px solid var(--border-light); }
+        .btn-reject { background: #262626; color: #f87171; border: 1px solid var(--border-light); }
     </style>
 </head>
 <body>
 
     <header class="app-header fade-in" style="animation-delay: 0.05s;">
-        <div class="brand">Bacon</div>
+        <div class="brand-block">
+            <div class="connection-status-dot" id="connection-dot" title="Статус PeerJS"></div>
+            <div class="brand">Bacon</div>
+        </div>
         <div class="header-actions">
-            <button class="btn-text" id="nav-add-friend">Add friend</button>
+            <button class="btn-text" id="nav-add-friend">Add Friend</button>
             <div class="profile-trigger" id="nav-profile">
                 <img id="header-avatar" src="" alt="Avatar">
                 <span id="header-nickname">User</span>
@@ -319,18 +350,26 @@
 
     <main class="workspace">
         <div class="sidebar fade-in" style="animation-delay: 0.1s;">
-            <div class="sidebar-title">Friends</div>
+            <div class="sidebar-header">
+                <div class="sidebar-title">Direct Connections</div>
+            </div>
             <div class="friends-list" id="friends-list"></div>
         </div>
 
         <div class="main-view fade-in" style="animation-delay: 0.15s;">
             <div class="panel call-area">
                 <div class="video-container">
-                    <div class="video-circle"><video id="local-video" autoplay muted playsinline></video></div>
-                    <div class="video-circle"><video id="remote-video" autoplay playsinline></video></div>
+                    <div class="video-circle">
+                        <video id="local-video" autoplay muted playsinline></video>
+                        <div class="video-label">You</div>
+                    </div>
+                    <div class="video-circle">
+                        <video id="remote-video" autoplay playsinline></video>
+                        <div class="video-label">Peer</div>
+                    </div>
                 </div>
                 <div class="call-controls">
-                    <input type="text" id="target-id" class="input-base" placeholder="Peer ID..." style="flex-grow: 1;">
+                    <input type="text" id="target-id" class="input-base" placeholder="Enter remote Peer ID..." style="flex-grow: 1;">
                     <button class="btn-primary" id="btn-call">Call</button>
                     <button class="btn-primary btn-danger" id="btn-hangup" disabled>End</button>
                 </div>
@@ -338,7 +377,7 @@
 
             <div class="panel chat-area">
                 <div class="messages" id="messages-container">
-                    <div class="msg in" style="background: transparent; border: 1px dashed var(--border-light); color: var(--text-muted); text-align: center; width: 100%; max-width: 100%;">Система готова. Ожидание связи...</div>
+                    <div class="msg in" style="background: transparent; border: 1px dashed var(--border-light); color: var(--text-muted); text-align: center; width: 100%; max-width: 100%;">Сеть инициализирована. Введите Peer ID выше для начала связи.</div>
                 </div>
                 <div class="chat-input-wrapper">
                     <input type="text" id="chat-input" class="input-base" placeholder="Type a message..." disabled>
@@ -359,55 +398,72 @@
                     <span id="side-nickname">User</span>
                 </div>
                 <div class="set-nav-group">
-                    <div class="set-nav-title">Design</div>
-                    <div class="set-nav-item active">Profile</div>
-                    <div class="set-nav-item">Theme</div>
-                </div>
-                <div class="set-nav-group">
-                    <div class="set-nav-title">Global</div>
-                    <div class="set-nav-item">Microphone</div>
-                    <div class="set-nav-item">Language</div>
+                    <div class="set-nav-title">User Settings</div>
+                    <div class="set-nav-item active" data-tab="profile">Profile</div>
+                    <div class="set-nav-item" data-tab="devices">Audio / Video</div>
                 </div>
             </div>
             
             <div class="set-content">
-                <div class="set-header">
-                    <span>Profile Settings</span>
-                    <button class="close-modal" id="close-settings">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                </div>
-                
-                <div class="ds-profile-card">
-                    <div class="ds-banner" id="prof-banner-bg">
-                        <label class="edit-overlay">
-                            <input type="file" id="upload-banner" accept="image/*">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                        </label>
+                <!-- Вкладка Профиль -->
+                <div class="set-pane active" id="pane-profile">
+                    <div class="set-header">
+                        <span>Profile Settings</span>
+                        <button class="close-modal" id="close-settings">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
                     </div>
-                    <div class="ds-avatar-wrap">
-                        <img class="ds-avatar" id="prof-avatar-img" src="">
-                        <label class="edit-overlay" style="border-radius: 50%;">
-                            <input type="file" id="upload-avatar" accept="image/*">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                        </label>
-                    </div>
-                    <div class="ds-info">
-                        <input type="text" id="prof-nick-input" class="ds-field title" placeholder="Nickname">
-                        <input type="text" id="prof-tag-input" class="ds-field tag" placeholder="@username">
-                        <textarea id="prof-bio-input" class="ds-field" rows="2" placeholder="About me..." style="resize: none;"></textarea>
-                        
-                        <div class="id-copy-block" id="btn-copy-id" title="Нажмите, чтобы скопировать">
-                            <div>
-                                <div class="id-label">Ваш Peer ID</div>
-                                <div class="id-value" id="display-my-id">Загрузка...</div>
+                    
+                    <div class="ds-profile-card">
+                        <div class="ds-banner" id="prof-banner-bg">
+                            <label class="edit-overlay">
+                                <input type="file" id="upload-banner" accept="image/*">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                            </label>
+                        </div>
+                        <div class="ds-avatar-wrap">
+                            <img class="ds-avatar" id="prof-avatar-img" src="">
+                            <label class="edit-overlay" style="border-radius: 50%;">
+                                <input type="file" id="upload-avatar" accept="image/*">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                            </label>
+                        </div>
+                        <div class="ds-info">
+                            <input type="text" id="prof-nick-input" class="ds-field title" placeholder="Nickname">
+                            <input type="text" id="prof-tag-input" class="ds-field tag" placeholder="@username">
+                            <textarea id="prof-bio-input" class="ds-field" rows="2" placeholder="About me..." style="resize: none;"></textarea>
+                            
+                            <div class="id-copy-block" id="btn-copy-id" title="Нажмите, чтобы скопировать Peer ID">
+                                <div>
+                                    <div class="id-label">Ваш Peer ID</div>
+                                    <div class="id-value" id="display-my-id">Генерация...</div>
+                                </div>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             </div>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                         </div>
                     </div>
+                    
+                    <button class="btn-primary" id="btn-save-profile" style="margin-top: 24px;">Save Changes</button>
                 </div>
-                
-                <button class="btn-primary" id="btn-save-profile" style="margin-top: 24px;">Save Changes</button>
+
+                <!-- Вкладка Устройства -->
+                <div class="set-pane" id="pane-devices">
+                    <div class="set-header">
+                        <span>Audio & Video Devices</span>
+                        <button class="close-modal" id="close-settings-2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </div>
+                    <div class="settings-form-group">
+                        <label class="settings-label">Camera</label>
+                        <select id="select-video" class="settings-select"></select>
+                    </div>
+                    <div class="settings-form-group">
+                        <label class="settings-label">Microphone</label>
+                        <select id="select-audio" class="settings-select"></select>
+                    </div>
+                    <button class="btn-primary" id="btn-apply-devices" style="margin-top: 12px;">Apply Devices</button>
+                </div>
             </div>
         </div>
     </div>
@@ -415,13 +471,13 @@
     <!-- Модальное окно: Добавить друга -->
     <div class="modal-overlay" id="friend-modal">
         <div class="settings-window" style="width: 380px; height: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
-            <div class="set-header" style="margin-bottom: 0; font-size: 18px;">
-                <span>Add Friend</span>
-                <button class="close-modal" id="close-friend"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            <div class="set-header" style="margin-bottom: 0; font-size: 17px;">
+                <span>Add Connection</span>
+                <button class="close-modal" id="close-friend"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
-            <input type="text" id="fr-id" class="input-base" placeholder="Friend's Peer ID">
+            <input type="text" id="fr-id" class="input-base" placeholder="Peer ID">
             <input type="text" id="fr-name" class="input-base" placeholder="Display Name">
-            <button class="btn-primary" id="btn-add-submit" style="width: 100%;">Add to List</button>
+            <button class="btn-primary" id="btn-add-submit" style="width: 100%;">Save to List</button>
         </div>
     </div>
 
@@ -429,71 +485,86 @@
     <div class="modal-overlay" id="incoming-modal">
         <div class="incoming-call-modal">
             <img class="caller-avatar" id="inc-avatar" src="" alt="">
-            <div class="caller-name" id="inc-name">Incoming...</div>
-            <div class="caller-status">is calling you</div>
+            <div class="caller-name" id="inc-name">Incoming Call</div>
+            <div class="caller-status">wants to connect with you</div>
             
             <div class="inc-actions">
-                <button class="btn-circle btn-reject" id="btn-inc-reject">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <button class="btn-circle btn-reject" id="btn-inc-reject" title="Отклонить">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
-                <button class="btn-circle btn-accept" id="btn-inc-accept">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <button class="btn-circle btn-accept" id="btn-inc-accept" title="Принять">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        class AppCore {
+        class P2PApp {
             constructor() {
                 this.peer = null;
+                this.myId = null;
                 this.localStream = null;
                 this.currentCall = null;
                 this.dataConn = null;
                 this.incomingCall = null;
-                
+
                 this.defaultAvatar = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200';
                 this.defaultBanner = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600';
-                
-                this.loadData();
+
+                this.loadUserData();
                 this.initDOM();
-                this.applyProfile();
-                this.renderFriends();
-                this.initPeer();
-                this.initMedia();
-                this.initEvents();
+                this.renderProfile();
+                this.renderFriendsList();
+                this.initPeerConnection();
+                this.initMediaStream();
+                this.initEventListeners();
             }
 
-            loadData() {
+            loadUserData() {
                 this.profile = JSON.parse(localStorage.getItem('bacon_prof')) || {
-                    nick: 'New User', tag: '@user', bio: '',
+                    nick: 'Operator', tag: '@node_01', bio: '',
                     avatar: this.defaultAvatar, banner: this.defaultBanner
                 };
                 this.friends = JSON.parse(localStorage.getItem('bacon_fr')) || [];
             }
 
-            saveData() {
+            saveUserData() {
                 localStorage.setItem('bacon_prof', JSON.stringify(this.profile));
             }
 
             initDOM() {
                 this.dom = {
-                    hAvatar: document.getElementById('header-avatar'),
-                    hNick: document.getElementById('header-nickname'),
-                    sAvatar: document.getElementById('side-avatar'),
-                    sNick: document.getElementById('side-nickname'),
+                    headerAvatar: document.getElementById('header-avatar'),
+                    headerNickname: document.getElementById('header-nickname'),
+                    sideAvatar: document.getElementById('side-avatar'),
+                    sideNickname: document.getElementById('side-nickname'),
+                    connectionDot: document.getElementById('connection-dot'),
                     
-                    pNick: document.getElementById('prof-nick-input'),
-                    pTag: document.getElementById('prof-tag-input'),
-                    pBio: document.getElementById('prof-bio-input'),
-                    pAvatarImg: document.getElementById('prof-avatar-img'),
-                    pBannerBg: document.getElementById('prof-banner-bg'),
+                    profNick: document.getElementById('prof-nick-input'),
+                    profTag: document.getElementById('prof-tag-input'),
+                    profBio: document.getElementById('prof-bio-input'),
+                    profAvatarImg: document.getElementById('prof-avatar-img'),
+                    profBannerBg: document.getElementById('prof-banner-bg'),
                     
-                    upAvatar: document.getElementById('upload-avatar'),
-                    upBanner: document.getElementById('upload-banner'),
+                    uploadAvatar: document.getElementById('upload-avatar'),
+                    uploadBanner: document.getElementById('upload-banner'),
                     
-                    myIdDisplay: document.getElementById('display-my-id'),
-                    targetId: document.getElementById('target-id'),
+                    displayMyId: document.getElementById('display-my-id'),
+                    targetIdInput: document.getElementById('target-id'),
+                    
+                    localVideo: document.getElementById('local-video'),
+                    remoteVideo: document.getElementById('remote-video'),
+                    
+                    btnCall: document.getElementById('btn-call'),
+                    btnHangup: document.getElementById('btn-hangup'),
+                    
+                    chatInput: document.getElementById('chat-input'),
+                    btnSend: document.getElementById('btn-send'),
+                    messagesContainer: document.getElementById('messages-container'),
+                    
+                    selectVideo: document.getElementById('select-video'),
+                    selectAudio: document.getElementById('select-audio'),
                     
                     modals: {
                         settings: document.getElementById('settings-modal'),
@@ -503,198 +574,306 @@
                 };
             }
 
-            applyProfile() {
-                this.dom.hAvatar.src = this.profile.avatar;
-                this.dom.hNick.textContent = this.profile.nick;
-                this.dom.sAvatar.src = this.profile.avatar;
-                this.dom.sNick.textContent = this.profile.nick;
+            renderProfile() {
+                this.dom.headerAvatar.src = this.profile.avatar;
+                this.dom.headerNickname.textContent = this.profile.nick;
+                this.dom.sideAvatar.src = this.profile.avatar;
+                this.dom.sideNickname.textContent = this.profile.nick;
                 
-                this.dom.pNick.value = this.profile.nick;
-                this.dom.pTag.value = this.profile.tag;
-                this.dom.pBio.value = this.profile.bio;
-                this.dom.pAvatarImg.src = this.profile.avatar;
-                this.dom.pBannerBg.style.backgroundImage = `url('${this.profile.banner}')`;
+                this.dom.profNick.value = this.profile.nick;
+                this.dom.profTag.value = this.profile.tag;
+                this.dom.profBio.value = this.profile.bio;
+                this.dom.profAvatarImg.src = this.profile.avatar;
+                this.dom.profBannerBg.style.backgroundImage = `url('${this.profile.banner}')`;
             }
 
-            initPeer() {
-                this.peer = new Peer({ config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] } });
+            initPeerConnection() {
+                this.peer = new Peer({
+                    config: {
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:stun1.l.google.com:19302' }
+                        ]
+                    }
+                });
 
                 this.peer.on('open', id => {
                     this.myId = id;
-                    this.dom.myIdDisplay.textContent = id;
+                    this.dom.displayMyId.textContent = id;
+                    this.dom.connectionDot.classList.add('online');
                 });
 
+                this.peer.on('error', err => {
+                    console.error('PeerJS error:', err);
+                    this.dom.connectionDot.classList.remove('online');
+                });
+
+                // Входящий видеозвонок
                 this.peer.on('call', call => {
                     this.incomingCall = call;
                     const meta = call.metadata || {};
-                    document.getElementById('inc-name').textContent = meta.nick || 'Unknown Caller';
+                    document.getElementById('inc-name').textContent = meta.nick || 'Incoming Peer';
                     document.getElementById('inc-avatar').src = meta.avatar || this.defaultAvatar;
                     this.dom.modals.incoming.classList.add('open');
                 });
 
-                this.peer.on('connection', conn => this.setupDataConn(conn));
+                // Входящее дейта-соединение (чат)
+                this.peer.on('connection', conn => {
+                    this.setupDataConnection(conn);
+                });
             }
 
-            async initMedia() {
+            async initMediaStream(constraints = { video: true, audio: true }) {
                 try {
-                    this.localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                    document.getElementById('local-video').srcObject = this.localStream;
-                } catch(e) { console.warn("Camera disabled"); }
+                    if (this.localStream) {
+                        this.localStream.getTracks().forEach(track => track.stop());
+                    }
+                    this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    this.dom.localVideo.srcObject = this.localStream;
+                    await this.populateDeviceList();
+                } catch (e) {
+                    console.warn("Медиаустройства недоступны или заблокированы:", e);
+                }
             }
 
-            initEvents() {
+            async populateDeviceList() {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    this.dom.selectVideo.innerHTML = '';
+                    this.dom.selectAudio.innerHTML = '';
+
+                    devices.forEach(device => {
+                        const opt = document.createElement('option');
+                        opt.value = device.deviceId;
+                        opt.text = device.label || `${device.kind}: ${device.deviceId.slice(0, 5)}...`;
+                        if (device.kind === 'videoinput') {
+                            this.dom.selectVideo.appendChild(opt);
+                        } else if (device.kind === 'audioinput') {
+                            this.dom.selectAudio.appendChild(opt);
+                        }
+                    });
+                } catch(e) { console.error(e); }
+            }
+
+            initEventListeners() {
+                // Открытие / закрытие модалок
                 document.getElementById('nav-profile').onclick = () => this.dom.modals.settings.classList.add('open');
                 document.getElementById('close-settings').onclick = () => this.dom.modals.settings.classList.remove('open');
+                document.getElementById('close-settings-2').onclick = () => this.dom.modals.settings.classList.remove('open');
                 
                 document.getElementById('nav-add-friend').onclick = () => this.dom.modals.friend.classList.add('open');
                 document.getElementById('close-friend').onclick = () => this.dom.modals.friend.classList.remove('open');
 
+                // Переключение вкладок настроек
+                document.querySelectorAll('.set-nav-item').forEach(item => {
+                    item.onclick = (e) => {
+                        document.querySelectorAll('.set-nav-item').forEach(i => i.classList.remove('active'));
+                        document.querySelectorAll('.set-pane').forEach(p => p.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                        const targetPane = document.getElementById(`pane-${e.currentTarget.dataset.tab}`);
+                        if (targetPane) targetPane.classList.add('active');
+                    };
+                });
+
+                // Копирование ID
                 document.getElementById('btn-copy-id').onclick = () => {
+                    if (!this.myId) return;
                     navigator.clipboard.writeText(this.myId);
-                    const val = this.dom.myIdDisplay;
-                    const old = val.textContent;
-                    val.textContent = "Скопировано!";
-                    val.style.color = "#ffffff";
-                    setTimeout(() => { val.textContent = old; val.style.color = ""; }, 2000);
+                    const el = this.dom.displayMyId;
+                    const old = el.textContent;
+                    el.textContent = "Скопировано в буфер!";
+                    setTimeout(() => el.textContent = old, 2000);
                 };
 
-                const handleUpload = (input, isBanner) => {
-                    input.onchange = (e) => {
+                // Загрузка аватара / баннера
+                const handleFileUpload = (inputEl, isBanner) => {
+                    inputEl.onchange = (e) => {
                         const file = e.target.files[0];
                         if (file) {
                             const reader = new FileReader();
                             reader.onload = (ev) => {
                                 if (isBanner) {
                                     this.profile.banner = ev.target.result;
-                                    this.dom.pBannerBg.style.backgroundImage = `url('${ev.target.result}')`;
+                                    this.dom.profBannerBg.style.backgroundImage = `url('${ev.target.result}')`;
                                 } else {
                                     this.profile.avatar = ev.target.result;
-                                    this.dom.pAvatarImg.src = ev.target.result;
+                                    this.dom.profAvatarImg.src = ev.target.result;
                                 }
                             };
                             reader.readAsDataURL(file);
                         }
                     };
                 };
-                handleUpload(this.dom.upAvatar, false);
-                handleUpload(this.dom.upBanner, true);
+                handleFileUpload(this.dom.uploadAvatar, false);
+                handleFileUpload(this.dom.uploadBanner, true);
 
+                // Сохранение профиля
                 document.getElementById('btn-save-profile').onclick = () => {
-                    this.profile.nick = this.dom.pNick.value.trim() || 'User';
-                    this.profile.tag = this.dom.pTag.value.trim() || '@user';
-                    this.profile.bio = this.dom.pBio.value.trim();
-                    this.saveData();
-                    this.applyProfile();
+                    this.profile.nick = this.dom.profNick.value.trim() || 'Operator';
+                    this.profile.tag = this.dom.profTag.value.trim() || '@node';
+                    this.profile.bio = this.dom.profBio.value.trim();
+                    this.saveUserData();
+                    this.renderProfile();
                     this.dom.modals.settings.classList.remove('open');
                 };
 
+                // Применение устройств
+                document.getElementById('btn-apply-devices').onclick = () => {
+                    const videoId = this.dom.selectVideo.value;
+                    const audioId = this.dom.selectAudio.value;
+                    this.initMediaStream({
+                        video: videoId ? { deviceId: { exact: videoId } } : true,
+                        audio: audioId ? { deviceId: { exact: audioId } } : true
+                    });
+                    this.dom.modals.settings.classList.remove('open');
+                };
+
+                // Добавление контакта
                 document.getElementById('btn-add-submit').onclick = () => {
                     const id = document.getElementById('fr-id').value.trim();
-                    const name = document.getElementById('fr-name').value.trim() || 'Friend';
+                    const name = document.getElementById('fr-name').value.trim() || 'Node';
                     if (!id) return;
                     this.friends.push({ id, name, avatar: this.defaultAvatar });
                     localStorage.setItem('bacon_fr', JSON.stringify(this.friends));
-                    this.renderFriends();
+                    this.renderFriendsList();
                     document.getElementById('fr-id').value = '';
                     this.dom.modals.friend.classList.remove('open');
                 };
 
-                document.getElementById('btn-call').onclick = () => {
-                    const id = this.dom.targetId.value.trim();
-                    if (!id) return;
-                    
-                    const call = this.peer.call(id, this.localStream, {
+                // Инициация звонка
+                this.dom.btnCall.onclick = () => {
+                    const targetId = this.dom.targetIdInput.value.trim();
+                    if (!targetId || targetId === this.myId) return;
+
+                    // Звонок по медиа
+                    const call = this.peer.call(targetId, this.localStream, {
                         metadata: { nick: this.profile.nick, avatar: this.profile.avatar }
                     });
-                    this.currentCall = call;
-                    this.bindCall(call);
-                    this.setupDataConn(this.peer.connect(id));
-                    
-                    document.getElementById('btn-call').disabled = true;
+                    this.bindCallEvents(call);
+
+                    // Соединение для чата
+                    const conn = this.peer.connect(targetId);
+                    this.setupDataConnection(conn);
+
+                    this.dom.btnCall.disabled = true;
                 };
 
-                document.getElementById('btn-hangup').onclick = () => this.endCall();
+                // Завершение звонка
+                this.dom.btnHangup.onclick = () => this.terminateCall();
 
+                // Принять / отклонить входящий звонок
                 document.getElementById('btn-inc-accept').onclick = () => {
                     this.dom.modals.incoming.classList.remove('open');
                     if (this.incomingCall) {
                         this.incomingCall.answer(this.localStream);
-                        this.currentCall = this.incomingCall;
-                        this.bindCall(this.currentCall);
-                        document.getElementById('btn-call').disabled = true;
+                        this.bindCallEvents(this.incomingCall);
+                        // Также коннектим дейта-канал к звонящему
+                        const conn = this.peer.connect(this.incomingCall.peer);
+                        this.setupDataConnection(conn);
                     }
                 };
-                
+
                 document.getElementById('btn-inc-reject').onclick = () => {
                     this.dom.modals.incoming.classList.remove('open');
-                    if (this.incomingCall) { this.incomingCall.close(); this.incomingCall = null; }
+                    if (this.incomingCall) {
+                        this.incomingCall.close();
+                        this.incomingCall = null;
+                    }
                 };
 
-                document.getElementById('btn-send').onclick = () => this.sendMsg();
-                document.getElementById('chat-input').onkeypress = (e) => { if (e.key === 'Enter') this.sendMsg(); };
+                // Чат
+                this.dom.btnSend.onclick = () => this.sendChatMessage();
+                this.dom.chatInput.onkeypress = (e) => { if (e.key === 'Enter') this.sendChatMessage(); };
             }
 
-            renderFriends() {
-                const c = document.getElementById('friends-list');
-                c.innerHTML = this.friends.length ? '' : '<div style="color:var(--text-muted); font-size:13px; text-align:center; margin-top:20px;">No friends yet.</div>';
+            renderFriendsList() {
+                const container = document.getElementById('friends-list');
+                container.innerHTML = this.friends.length ? '' : '<div style="color:var(--text-muted); font-size:12px; text-align:center; margin-top:24px;">No contacts added.</div>';
                 
                 this.friends.forEach(f => {
                     const el = document.createElement('div');
                     el.className = 'friend-item';
-                    el.innerHTML = `<div class="friend-meta"><img src="${f.avatar}"> <span class="name">${f.name}</span></div>`;
-                    el.onclick = () => { this.dom.targetId.value = f.id; };
-                    c.appendChild(el);
+                    el.innerHTML = `<div class="friend-meta"><img src="${f.avatar}"><span class="name">${f.name}</span></div>`;
+                    el.onclick = () => { this.dom.targetIdInput.value = f.id; };
+                    container.appendChild(el);
                 });
             }
 
-            bindCall(call) {
-                call.on('stream', stream => {
-                    document.getElementById('remote-video').srcObject = stream;
-                    document.getElementById('btn-hangup').disabled = false;
+            bindCallEvents(call) {
+                this.currentCall = call;
+                this.dom.btnCall.disabled = true;
+                this.dom.btnHangup.disabled = false;
+
+                call.on('stream', remoteStream => {
+                    this.dom.remoteVideo.srcObject = remoteStream;
                 });
-                call.on('close', () => this.endCall());
+
+                call.on('close', () => this.terminateCall());
+                call.on('error', () => this.terminateCall());
             }
 
-            setupDataConn(conn) {
+            setupDataConnection(conn) {
                 this.dataConn = conn;
                 conn.on('open', () => {
-                    document.getElementById('chat-input').disabled = false;
-                    document.getElementById('btn-send').disabled = false;
+                    this.dom.chatInput.disabled = false;
+                    this.dom.btnSend.disabled = false;
+                    this.appendMessage("Соединение установлено успешно.", false, true);
                 });
-                conn.on('data', data => this.appendMsg(data.text, false));
+
+                conn.on('data', data => {
+                    if (data && data.text) {
+                        this.appendMessage(data.text, false);
+                    }
+                });
+
+                conn.on('close', () => {
+                    this.dom.chatInput.disabled = true;
+                    this.dom.btnSend.disabled = true;
+                });
             }
 
-            sendMsg() {
-                const inp = document.getElementById('chat-input');
-                const text = inp.value.trim();
+            sendChatMessage() {
+                const text = this.dom.chatInput.value.trim();
                 if (!text || !this.dataConn) return;
+                
                 this.dataConn.send({ text });
-                this.appendMsg(text, true);
-                inp.value = '';
+                this.appendMessage(text, true);
+                this.dom.chatInput.value = '';
             }
 
-            appendMsg(text, isSelf) {
-                const c = document.getElementById('messages-container');
+            appendMessage(text, isSelf, isSystem = false) {
+                const c = this.dom.messagesContainer;
                 const m = document.createElement('div');
-                m.className = `msg ${isSelf ? 'out' : 'in'} fade-in`;
+                if (isSystem) {
+                    m.className = 'msg in fade-in';
+                    m.style.cssText = 'background:transparent; border:1px dashed var(--border-light); color:var(--text-muted); text-align:center; width:100%; max-width:100%;';
+                } else {
+                    m.className = `msg ${isSelf ? 'out' : 'in'} fade-in`;
+                }
                 m.textContent = text;
                 c.appendChild(m);
                 c.scrollTop = c.scrollHeight;
             }
 
-            endCall() {
-                if (this.currentCall) this.currentCall.close();
-                if (this.dataConn) this.dataConn.close();
-                this.currentCall = null; this.dataConn = null;
-                document.getElementById('remote-video').srcObject = null;
-                document.getElementById('btn-call').disabled = false;
-                document.getElementById('btn-hangup').disabled = true;
-                document.getElementById('chat-input').disabled = true;
-                document.getElementById('btn-send').disabled = true;
+            terminateCall() {
+                if (this.currentCall) {
+                    this.currentCall.close();
+                    this.currentCall = null;
+                }
+                if (this.dataConn) {
+                    this.dataConn.close();
+                    this.dataConn = null;
+                }
+                this.dom.remoteVideo.srcObject = null;
+                this.dom.btnCall.disabled = false;
+                this.dom.btnHangup.disabled = true;
+                this.dom.chatInput.disabled = true;
+                this.dom.btnSend.disabled = true;
+                this.appendMessage("Сеанс связи завершен.", false, true);
             }
         }
 
-        window.onload = () => window.app = new AppCore();
+        window.onload = () => { window.p2pApp = new P2PApp(); };
     </script>
 </body>
 </html>
